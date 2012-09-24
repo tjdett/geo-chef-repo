@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-mypkgs = ["java-1.7.0-openjdk", "subversion"]
+mypkgs = ["java-1.7.0-openjdk", "subversion", "python-pip"]
 
 mypkgs.each do |p|
   package p
@@ -37,3 +37,23 @@ script "extract_solr" do
     File.exists?("/opt/apache-solr-3.6.0")
   end
 end 
+
+script "mv_schema_to_solr" do
+  interpreter "bash"
+  user "root"
+  code <<-EOH
+    cp /opt/geo/schema.xml /opt/apache-solr-3.6.0/example/solr/conf/
+    cd /opt/apache-solr-3.6.0/example/exampledocs
+    rm *.xml
+  EOH
+  not_if do
+    File.exists?("/opt/apache-solr-3.6.0/example/solr/conf/schema.xml")
+  end
+end
+
+cookbook_file "/root/run_geo.sh" do
+  action :create
+  source "run_geo.sh"
+end
+  
+ 
