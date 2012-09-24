@@ -13,6 +13,18 @@ mypkgs.each do |p|
   package p
 end
 
+script "checkout_geo" do
+  interpreter "bash"
+  user "root"
+  code <<-EOH
+    cd /opt
+    svn checkout https://uws-eresearch.googlecode.com/svn/trunk/geo geo
+  EOH
+  not_if do
+    File.exists?("/opt/geo")
+  end
+end
+
 script "extract_solr" do
   interpreter "bash"
   user "root"
